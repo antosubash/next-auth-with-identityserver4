@@ -10,7 +10,7 @@ export const environment = {
     logoUrl: '',
   },
   oAuthConfig: {
-    issuer: 'https://localhost:44344',
+    issuer: 'https://localhost:44336',
     redirectUri: baseUrl,
     clientId: 'NextAuthApp_App',
     responseType: 'code',
@@ -19,7 +19,7 @@ export const environment = {
   },
   apis: {
     default: {
-      url: 'https://localhost:44344',
+      url: 'https://localhost:44336',
       rootNamespace: 'NextAuthApp',
     },
   },
