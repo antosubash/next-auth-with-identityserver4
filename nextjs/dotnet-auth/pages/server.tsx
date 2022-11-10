@@ -1,13 +1,11 @@
-import { unstable_getServerSession } from "next-auth/next"
-import { authOptions } from "./api/auth/[...nextauth]"
-import Layout from "../components/layout"
-import type { GetServerSidePropsContext } from "next"
-import type { Session } from "next-auth"
+import type { GetServerSidePropsContext } from "next";
+import Layout from "../components/layout";
+import { getServerSession } from "../lib/utils";
 
-export default function ServerSidePage({ session }: any) {
+export default function ServerSidePage({ data }: any) {
   console.log(
     "🚀 ~ file: server.tsx ~ line 8 ~ ServerSidePage ~ session",
-    session
+    data
   );
   // As this page uses Server Side Rendering, the `session` will be already
   // populated on render without needing to go through a loading stage.
@@ -32,18 +30,16 @@ export default function ServerSidePage({ session }: any) {
         The disadvantage of Server Side Rendering is that this page is slower to
         render.
       </p>
-      <pre>{JSON.stringify(session, null, 2)}</pre>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </Layout>
   );
 }
 
-// Export the `session` prop to use sessions with Server Side Rendering
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await unstable_getServerSession(context.req, context.res, authOptions);
-  
+  const session = await getServerSession(context);
   return {
     props: {
-      session: session,
+      data: session,
     },
   };
 }

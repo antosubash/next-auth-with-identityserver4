@@ -1,6 +1,8 @@
-import Layout from "../components/layout"
+import { useSession } from "next-auth/react"
+import Layout from "../components/layout";
 
 export default function ClientPage() {
+  var session = useSession();
   return (
     <Layout>
       <h1>Client Side Rendering</h1>
@@ -22,6 +24,7 @@ export default function ClientPage() {
         The disadvantage of <strong>useSession()</strong> is that it requires
         client side JavaScript.
       </p>
+      <pre>{JSON.stringify(session, null, 2)}</pre>
     </Layout>
-  )
+  );
 }
