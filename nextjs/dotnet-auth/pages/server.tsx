@@ -4,8 +4,11 @@ import Layout from "../components/layout"
 import type { GetServerSidePropsContext } from "next"
 import type { Session } from "next-auth"
 
-export default function ServerSidePage({ session }: { session: Session }) {
-    console.log("session", session);
+export default function ServerSidePage({ session }: any) {
+  console.log(
+    "🚀 ~ file: server.tsx ~ line 8 ~ ServerSidePage ~ session",
+    session
+  );
   // As this page uses Server Side Rendering, the `session` will be already
   // populated on render without needing to go through a loading stage.
   return (
@@ -31,18 +34,16 @@ export default function ServerSidePage({ session }: { session: Session }) {
       </p>
       <pre>{JSON.stringify(session, null, 2)}</pre>
     </Layout>
-  )
+  );
 }
 
 // Export the `session` prop to use sessions with Server Side Rendering
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await unstable_getServerSession(context.req, context.res, authOptions);
+  
   return {
     props: {
-      session: await unstable_getServerSession(
-        context.req,
-        context.res,
-        authOptions
-      ),
+      session: session,
     },
-  }
+  };
 }
