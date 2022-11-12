@@ -1,6 +1,7 @@
 import { withAuth } from "next-auth/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { hostData } from "./data/HostData";
+import { OpenAPI } from "./generated/api";
 
 export default withAuth(
   function middleware(request: NextRequest) {
@@ -18,18 +19,20 @@ export default withAuth(
     if (tenant && currentIssuer != tenant?.apiUrl) {
       shouldSetCookie = true;
     }
-
+    OpenAPI.BASE = issuer;
     if (shouldSetCookie && tenant) {
       console.log("middleware.ts: setting issuer to " + tenant.apiUrl);
       response.cookies.set("next-auth.issuer", tenant.apiUrl);
+      response.cookies.set("__tenant", tenant.tenantId || "");
+      
     }
     return response;
   },
   {
     callbacks: {
       authorized: ({ req, token }) => {
-        console.log("middleware.ts: response.url: ", req.url);
-        console.log("middleware.ts: response.url: ", token);
+        // console.log("middleware.ts: url: line: 32 ", req.url);
+        // console.log("middleware.ts: token: ", token);
         // /admin requires admin role, but /me only requires the user to be logged in.
         return req.nextUrl.pathname !== "/admin" || token?.userRole === "admin";
       },

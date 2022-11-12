@@ -1,11 +1,15 @@
 import IdentityServer4Provider from "next-auth/providers/identity-server4";
 import { NextAuthOptions, unstable_getServerSession } from "next-auth";
-import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
-import { getCookie } from "cookies-next";
-import { hostData } from "../data/HostData";
+import {
+  GetServerSidePropsContext,
+} from "next";
+import { OpenAPI as ApiOptions } from "../generated/api";
+import { getCookieFromRequest } from "./cookieUtils";
 export const getAuthOptions = (req: any, res: any) => {
-  var issuer = getCookie("next-auth.issuer", { req, res }) as string;
-  if (!issuer) throw new Error("issuer not found in cookies");
+  var issuer = getCookieFromRequest("next-auth.issuer", req);
+  if (!issuer) {
+    throw new Error("issuer not found");
+  }
   const authOptions: NextAuthOptions = {
     providers: [
       IdentityServer4Provider({
@@ -25,13 +29,6 @@ export const getAuthOptions = (req: any, res: any) => {
     },
     jwt: {
       secret: process.env.SECRET,
-    },
-    pages: {
-      // signIn: '/auth/signin',  // Displays signin buttons
-      // signOut: '/auth/signout', // Displays form with sign out button
-      // error: '/auth/error', // Error code passed in query string as ?error=
-      // verifyRequest: '/auth/verify-request', // Used for check email page
-      // newUser: null // If set, new users will be directed here on first sign in
     },
     callbacks: {
       async signIn() {
@@ -66,8 +63,13 @@ export const getServerSession = async (context: GetServerSidePropsContext) => {
   return session;
 };
 
-export const getTenant = (host: string) => {
-  var tenant = hostData.find((x) => x.host == host);
-  if (!tenant) throw new Error("tenant not found");
-  return tenant;
+export const prepareApiRequest = async (context: GetServerSidePropsContext) => {
+  var session = await getServerSession(context);
+  var issuer = getCookieFromRequest("next-auth.issuer", context.req);
+  ApiOptions.BASE = issuer ?? "";
+  var tenant = getCookieFromRequest("__tenant", context.req);
+  ApiOptions.HEADERS = {
+    __tenant: tenant,
+  } as Record<string, string>;
+  ApiOptions.TOKEN = session?.accessToken as string;
 };

@@ -1,11 +1,9 @@
 import type { GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
 import Layout from "../components/layout";
 import { AbpApplicationConfigurationService } from "../generated/api";
-import { getServerSession } from "../lib/utils";
-
-export default function ServerSidePage({ data, appConfig }: any) {
-  // As this page uses Server Side Rendering, the `session` will be already
-  // populated on render without needing to go through a loading stage.
+import { prepareApiRequest } from "../lib/authUtil";
+export default function ServerSidePage({ appConfig }: any) {
   return (
     <Layout>
       <h1>Server Side Rendering</h1>
@@ -27,17 +25,17 @@ export default function ServerSidePage({ data, appConfig }: any) {
         The disadvantage of Server Side Rendering is that this page is slower to
         render.
       </p>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <pre>{JSON.stringify(appConfig?.currentUser, null, 2)}</pre>
     </Layout>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSession(context);
-  var appConfig = await AbpApplicationConfigurationService.abpApplicationConfigurationGet();
+  await prepareApiRequest(context);
+  var appConfig =
+    await AbpApplicationConfigurationService.abpApplicationConfigurationGet();
   return {
     props: {
-      data: session,
       appConfig,
     },
   };
