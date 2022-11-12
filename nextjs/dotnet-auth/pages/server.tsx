@@ -1,12 +1,9 @@
 import type { GetServerSidePropsContext } from "next";
 import Layout from "../components/layout";
+import { AbpApplicationConfigurationService } from "../generated/api";
 import { getServerSession } from "../lib/utils";
 
-export default function ServerSidePage({ data }: any) {
-  console.log(
-    "🚀 ~ file: server.tsx ~ line 8 ~ ServerSidePage ~ session",
-    data
-  );
+export default function ServerSidePage({ data, appConfig }: any) {
   // As this page uses Server Side Rendering, the `session` will be already
   // populated on render without needing to go through a loading stage.
   return (
@@ -37,9 +34,11 @@ export default function ServerSidePage({ data }: any) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context);
+  var appConfig = await AbpApplicationConfigurationService.abpApplicationConfigurationGet();
   return {
     props: {
       data: session,
+      appConfig,
     },
   };
 }

@@ -1,13 +1,13 @@
-import Link from "next/link"
-import { signIn, signOut, useSession } from "next-auth/react"
-import styles from "./header.module.css"
+import Link from "next/link";
+import { signIn, signOut, useSession } from "next-auth/react";
+import styles from "./header.module.css";
 
 // The approach used in this component shows how to build a sign in and sign out
 // component that works on pages which support both client and server side
 // rendering, and avoids any flash incorrect content on initial page load.
 export default function Header() {
-  const { data: session, status } = useSession()
-  const loading = status === "loading"
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
 
   return (
     <header>
@@ -29,8 +29,8 @@ export default function Header() {
                 href={`/api/auth/signin`}
                 className={styles.buttonPrimary}
                 onClick={(e) => {
-                  e.preventDefault()
-                  signIn("identity-server4")
+                  e.preventDefault();
+                  signIn("identity-server4");
                 }}
               >
                 Sign in
@@ -54,8 +54,8 @@ export default function Header() {
                 href={`/api/auth/signout`}
                 className={styles.button}
                 onClick={(e) => {
-                  e.preventDefault()
-                  signOut()
+                  e.preventDefault();
+                  signOut();
                 }}
               >
                 Sign out
@@ -67,42 +67,28 @@ export default function Header() {
       <nav>
         <ul className={styles.navItems}>
           <li className={styles.navItem}>
-            <Link href="/">
-              <a>Home</a>
-            </Link>
+            <Link href="/">Home</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/client">
-              <a>Client</a>
-            </Link>
+            <Link href="/client">Client</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/server">
-              <a>Server</a>
-            </Link>
+            <Link href="/server">Server</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/protected">
-              <a>Protected</a>
-            </Link>
+            <Link href="/protected">Protected</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/api-example">
-              <a>API</a>
-            </Link>
+            <Link href="/api-example">API</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/admin">
-              <a>Admin</a>
-            </Link>
+            <Link href="/admin">Admin</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/me">
-              <a>Me</a>
-            </Link>
+            <Link href="/me">Me</Link>
           </li>
         </ul>
       </nav>
     </header>
-  )
+  );
 }

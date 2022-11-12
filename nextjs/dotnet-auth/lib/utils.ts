@@ -2,12 +2,8 @@ import IdentityServer4Provider from "next-auth/providers/identity-server4";
 import { NextAuthOptions, unstable_getServerSession } from "next-auth";
 import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
 import { getCookie } from "cookies-next";
-import { IncomingMessage, ServerResponse } from "http";
-
-export const getAuthOptions = (
-  req: NextApiRequest | IncomingMessage,
-  res: NextApiResponse | ServerResponse
-) => {
+import { hostData } from "../data/HostData";
+export const getAuthOptions = (req: any, res: any) => {
   var issuer = getCookie("next-auth.issuer", { req, res }) as string;
   if (!issuer) throw new Error("issuer not found in cookies");
   const authOptions: NextAuthOptions = {
@@ -47,7 +43,7 @@ export const getAuthOptions = (
       },
       async jwt({ token, account }) {
         if (account) {
-          token.accessToken = account.access_token;
+          token.accessToken = account.access_token!;
         }
         return token;
       },
@@ -68,4 +64,10 @@ export const getServerSession = async (context: GetServerSidePropsContext) => {
     authOptions
   );
   return session;
+};
+
+export const getTenant = (host: string) => {
+  var tenant = hostData.find((x) => x.host == host);
+  if (!tenant) throw new Error("tenant not found");
+  return tenant;
 };
