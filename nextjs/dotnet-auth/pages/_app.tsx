@@ -10,7 +10,6 @@ import { useEffect } from "react";
 import { getTenant } from "../lib/utils";
 import { hostData } from "../data/HostData";
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
-  setCookie("next-auth.issuer", "https://localhost:44336");
   if (typeof window !== "undefined") {
     ApiOptions.BASE = "https://localhost:44336";
     if (location.host) {
@@ -18,7 +17,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       if (tenant) {
         setCookie("__tenant", tenant.tenantId);
       }
-      console.log("🚀 ~ file: _app.tsx ~ line 16 ~ MyApp ~ tenant", tenant);
     }
 
     // if (tenant) {

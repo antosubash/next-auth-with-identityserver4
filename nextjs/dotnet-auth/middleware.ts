@@ -1,10 +1,29 @@
-import { withAuth } from "next-auth/middleware"
+import { withAuth } from "next-auth/middleware";
 import { NextRequest, NextResponse } from "next/server";
+import { hostData } from "./data/HostData";
 
-// More on how NextAuth.js middleware works: https://next-auth.js.org/configuration/nextjs#middleware
 export default withAuth(
   function middleware(request: NextRequest) {
-     console.log("middleware.ts: response.url: ", request.url);
+    const response = NextResponse.next();
+    var host = request.headers.get("host");
+    var currentIssuer = request.cookies.get("next-auth.issuer")?.value;
+    var issuer = "";
+    var tenant = hostData.find((x) => x.host == host);
+    var shouldSetCookie = false;
+    if (!currentIssuer) {
+      issuer = tenant?.apiUrl!;
+      shouldSetCookie = true;
+    }
+
+    if (tenant && currentIssuer != tenant?.apiUrl) {
+      shouldSetCookie = true;
+    }
+
+    if (shouldSetCookie && tenant) {
+      console.log("middleware.ts: setting issuer to " + tenant.apiUrl);
+      response.cookies.set("next-auth.issuer", tenant.apiUrl);
+    }
+    return response;
   },
   {
     callbacks: {

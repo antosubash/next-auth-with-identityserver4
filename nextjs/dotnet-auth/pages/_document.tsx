@@ -8,7 +8,6 @@ class MyDocument extends Document {
   ): Promise<DocumentInitialProps> {
     const initialProps = await Document.getInitialProps(ctx);
     var host = ctx?.req?.headers.host;
-    console.log("🚀 ~ file: _document.tsx ~ line 11 ~ MyDocument ~ host", host)
     if (host) {
       ApiOptions.BASE = "https://localhost:44336";
       ApiOptions.HEADERS = async () => {
